@@ -110,12 +110,12 @@ params$session
 
 ```{r results="hide",echo=F}
 require(RCurl)
-script <- getURL("https://raw.githubusercontent.com/darwinanddavis/499R/master/exp_pop_growth.R", ssl.verifypeer = FALSE)
+script <- getURL("https://raw.githubusercontent.com/darwinanddavis/499R/master/exp_pop_growth.Rmd", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 ```
 
 
-# Overview
+# Overview_??
 
 Examples of exponential population growth in R.   
 
