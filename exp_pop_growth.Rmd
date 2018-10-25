@@ -1,5 +1,5 @@
 ---
-title: Exponential population growth 
+title: Exponential population growth   
 author: |
  | Matthew Malishev^1^* 
  |  
@@ -72,7 +72,7 @@ vignette: >
 # render(f, output_format='pdf_document')
 ```
 
-```{r, set-options, echo = FALSE, cache = FALSE}
+```{r, set-options, echo = FALSE, cache = F}
 options(width=100)
 knitr::opts_chunk$set(
  eval = F, # run all code
@@ -115,13 +115,13 @@ eval(parse(text = script))
 ```
 
 
-# Overview_??
+# Overview  
 
 Examples of exponential population growth in R.   
 
 ## Install dependencies
 ```{r, load packages, include=T, cache=F, message=F, warning=F, results='hide'}
-packages <- c("dplyr","deSolve")  
+packages <- c("dplyr","deSolve","pdftools")  
 if (require(packages)) {
     install.packages(packages,dependencies = T)
     require(packages)
@@ -130,7 +130,7 @@ lapply(packages,library,character.only=T)
 ```
 # Section 1
 
-## Exponential growth equation  
+## Exponential growth equation    
 
 $$
 N_t = N_0 \cdot e^{rt}
@@ -168,7 +168,7 @@ $$
 because $e^0 = 1$.  
   
 
-### Parameters
+### Parameters  
 ```{r}
 # parameters 
 N_t <- 0 # expected pop size
@@ -229,7 +229,7 @@ A population of 100 individuals. Each individual can on average contribute 1/4 o
 
 Set your parameters for the population  
 ```{r}
-N_0 = 20; # initial population size  
+N_0 <- 20; # initial population size  
 ```
 
 Over time  
@@ -254,3 +254,68 @@ popsize
 popsize[2]  
 ```
 # Section 2  
+
+## Simulation loop   
+
+```{r}
+r <- 2
+N_0 <-  20
+t <- 10
+popsize <- list() # create empty list to populate in loop  
+tt <- 2:t # now make t a vector to make a time period
+
+for(i in tt){ # start  loop
+  N_0[i] <- N_0[i-1]*r # middle of loop
+  popsize <- N_0 # put the pop size into the list we created  
+} # end loop
+popsize
+```
+
+Plot  
+```{r}
+# plot it
+plot(popsize)
+
+# extend plot params
+tta <- c(1,tt)# add the first year onto the time vector
+ttm <- max(tt) # get the maximum value of the time vector  
+xlim <- c(1,ttm) # put this in a vector
+ylim <- c(0,max(N_0)) # do the same for growth
+par(las=1,bty="n") # set plotting params  
+
+plot(tta,popsize, # vectors to plot
+     xlim=xlim, # set the x limits
+     ylim=ylim, # y limits  
+     xlab="Time",
+     ylab="Population growth",
+     pch=20, # set point type
+     col="pink"
+     )
+
+?plot # help page for plot function   
+
+```
+
+## Event-based conditions   
+
+Changing conditions halfway through a simulation. Using `if` and `else` statements.  
+```{r}
+popsize <- list() # reset the list  
+
+for (i in tt){ 
+  if((i%%5) == 0){ #modify growth rate depending on the year
+    r = 4
+    }else{ # or just an ok year
+      r = 2
+      }
+  N_0[i] <- N_0[i-1]*r # the population growth equation
+  popsize <- N_0
+} 
+
+popsize
+
+par(las=1,bty="n") # set plotting params   
+plot(popsize)
+```
+
+
