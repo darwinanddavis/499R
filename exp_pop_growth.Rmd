@@ -1,5 +1,5 @@
 ---
-title: Exponential population growth   
+title: Exponential population growth  
 author: |
  | Matthew Malishev^1^* 
  |  
@@ -304,9 +304,9 @@ popsize <- list() # reset the list
 
 for (i in tt){ 
   if((i%%5) == 0){ #modify growth rate depending on the year
-    r = 4
+    r <- 4
     }else{ # or just an ok year
-      r = 2
+      r <- 2
       }
   N_0[i] <- N_0[i-1]*r # the population growth equation
   popsize <- N_0
@@ -315,7 +315,132 @@ for (i in tt){
 popsize
 
 par(las=1,bty="n") # set plotting params   
-plot(popsize)
+plot(popsize,pch=20,col="pink")
+```
+Another `for` loop example  
+
+```{r}
+popsize <- list() # reset the list  
+
+for (i in tt){ 
+  if (i <= 6){ # for the first five years, use r = 2
+    r <- 2
+    }else if(i >= 10){
+      # and also at 10 years 
+      r <- 2
+      }else{
+    # but between 5th and 9th year,
+    # we grow slower
+        r <- 0.5
+        } # end of if elseif else statement
+  N_0[i] <- N_0[i-1]*r # the population growth equation
+  popsize <- N_0
+} 
+
+popsize
+
+par(las=1,bty="n") # set plotting params   
+plot(popsize,pch=20,col="pink")
 ```
 
+How do we figure out at what time point a population has reached a certain growth stage? Using `while` loops.    
+```{r}
+
+r <- 2 # ?? # set r
+N_0 <-  20 # initial size
+popsize <- list() # reset the list  
+popsize_d <- 5000 # desired pop size
+
+t <- 0 # set time var 
+while (N_0[t + 1] <= popsize_d){ # while we're under the desired pop size  
+   t = t + 1 ; # advance one time step  
+  N_0[t + 1] <- N_0[t]*r; # population growth eq
+  time_to_popsize_d <- NULL # time to reach popsize_d? 
+  popsize <- N_0
+} # close loop
+
+```
+
+How can we use `R` to get the time to reach `popsize_d`?    
+```{r}
+
+# get the length of the populaiton size vector and replace the "NULL" in the above loop with this function.  
+time_to_popsize_d <- NULL # ??
+
+popsize[time_to_popsize_d] # this is the size of the pop at the desired time step  
+
+```
+
+## Making reusable `R` code: functions.    
+
+Putting all the above into reusable code that replaces the population growth parameters with input variables. Using `function`.  
+
+`Function`s pass user-defined input variables into an `R` procedure so that you can package code into a reusable and general program, the function.     
+
+Take your simulation you want to put into the function.  
+```{r}
+r <- 2 # set r
+popsize <-  20 # initial size
+popsize_d <- 5000 # desired size
+time_to_popsize_d <- NULL # ?? # use your answer from above 
+
+t <- 0 # set time var 
+while (popsize[t + 1] <= popsize_d){ # while we're under the desired pop size  
+   t = t + 1 ; # advance one time step  
+  popsize[t + 1] <- popsize[t]*r; # population growth eq
+  time_to_popsize_d <- NULL # time to reach popsize_d?? 
+} # close loop
+
+# writing the function. we'll call it 'discrete_growth'. 
+discrete_growth <- function(r){ # make popsize an input variable   
+  d <- popsize*r
+  return(d) # we're just returning the popsize multipled by growth rate
+} 
+
+# now we replace the 'r' parameter with a value for 'r'
+discrete_growth(5)
+
+```
+
+What would the function look like if we wanted to figure out the following parameters?
+```{r}
+r <- NULL #?? pop growth 
+N_0 <- NULL #?? initial pop size  
+t <- NULL
+popsize <- list() # create empty list to populate in loop  
+
+# write the below function  
+discrete_growth <- function(r, ?? , ?? ){ # <--- there will be three input variables  
+  popsize <- ??
+  tt <- 2:?? # make t a vector to make a time period
+  for (i in tt){
+    N_0[i] <- N_0[i-1]*r # middle of loop
+    popsize <- N_0 # put the pop size into the list we created  
+    } # end loop
+  d <- popsize 
+  plot(d) # plot popsize with the appropriate time scale  
+  return(d) # get d
+} 
+
+# now just replace the input variable with the values you want to simulate  
+discrete_growth() 
+
+```
+
+Save the function in the `R` memory. Call it 'popsize_func'.  
+```{r}
+popsize_func <- ??
+
+```
+
+Now save a separate function with different input parameters, then run both functons. This should give you an idea of how `R` saves things to memory.   
+```{r}
+# use these values for popsize_func_2
+0.1
+500
+10000
+
+popsize_func_2 <- ?? # 
+popsize_func # is the output for popsize_func look different to popsize_func_2? 
+```
 
