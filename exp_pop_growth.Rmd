@@ -410,7 +410,7 @@ t <- NULL
 popsize <- list() # create empty list to populate in loop  
 
 # write the below function  
-discrete_growth <- function(r, ?? , ?? ){ # <--- there will be three input variables  
+discrete_growth <- function(??){ # <--- there will be three input variables  
   popsize <- ??
   tt <- 2:?? # make t a vector to make a time period
   for (i in tt){
