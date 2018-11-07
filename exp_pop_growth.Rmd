@@ -197,11 +197,8 @@ was 500. What will the population be in 2020?
 
 ```
 
-
 ## Instantaneous rate of growth  
-Equation showing the rate of population increase  
-
-
+The above growth model equation is discrete growth: population growth happens on discrete time steps. To fill in the gaps between these time steps, we use a continuous growth model. This follows an ordinary differential equation (ODE).    
 
 $$
 \frac{dN}{dt} = rN
@@ -443,4 +440,97 @@ Now save a separate function with different input parameters, then run both func
 popsize_func_2 <- ?? # 
 popsize_func # is the output for popsize_func look different to popsize_func_2? 
 ```
+
+## Simulating the continuous population growth model    
+
+We can use `R` to simulate the ODE of the population growth model, $dN/dt = rN$, using the `lsoda` function for 'solving' ODEs. 
+
+```{r}
+?? # first load the 'deSolve' package  
+?? # then get the help page for the function 'lsoda'   
+```
+
+We need the following elements for the `lsoda` function:  
+- a vector of parameters, par  
+- initial population density, N_0      
+- time vector, time  
+\  
+```{r}
+par <- r # use the population growth rate for the parameter soace  
+N_0 <- 0.5 # initial population density    
+# create a time sequence using the following values
+# start = 0 
+# end = 10
+# every 0.5 (years)  
+# you can set these as variables, or just leave them static as integers.   
+time <- seq() # ??  
+
+```
+
+Now we need to create the equation that the `lsoda` ODE solver function will simualte using population growth parameters. These will be time, a previous solutiin of the ODE representing the state of the poopulation, and the growth rate.  
+
+First, we need to use a list vector so that the `lsoda` function can understand the input we feed it.  
+
+Here is a toy example of vector notation in a list.  
+\  
+```{r}
+# lists can store multiple inputs, such as integers, character strings, and functions.  
+nums <- 1:10
+char <- c("A","B","C","D")
+l <- list(nums, char)
+# to access each list element, we use vector notation.  
+l[1] # access the first list element  
+l[2] # second element 
+l[[2]] # second element indexed using vector notation  
+class(l[2]) # what class is this?
+class(l[[2]]) # compared to this?
+#third item of the second element. notice the use of indexing: '[]' vs. '[[]]' 
+l[[2]][3] 
+```
+
+Using list indexing and vector notation, we can provide the right input for the `lsoda` function  
+\  
+```{r}
+# t, time  
+# N, previous solution of the ODE. this will be the population growth eq, dN/dt   # dN/dt = rN
+# r, growth rate
+
+# this function is the dNdt eq, but in function format so that lsoda can read it.
+expgrowth <- function(t,N,r){
+  # use vector notation to create a list    
+  N <- r*N[1] # pop growth eq 
+  list(N) # return the dN/dt solution as a list so that lsoda can read it  
+}
+
+```
+
+Now put the population growth equation above into the ODE solver using the variables we have defined above.   
+\  
+```{r}
+# expgrowth_solve <- lsoda(initial conditions, time, the population growth model, and the parameter space)
+expgrowth_solve <- lsoda(??,??,expgrowth,??)
+?lsoda # check the help page if stuck
+
+expgrowth_solve
+class(expgrowth_solve) # check class
+str(expgrowth_solve) # check the structure of the object
+# now plot the population growth output from the ODE solver function  
+xx <- expgrowth_solve[,1] # access the first column of the matrix
+yy <- expgrowth_solve[,2] # access the second column of the matrix
+expgrowth_solve[20,2] # what does this mean?
+
+par(las=1,bty="n")
+plot(xx,yy,
+     type="l",col="red",
+     xlab="Time (years)",
+     ylab="Population size",
+     main="Continuous population growth over time \n by simulating the population growth model")
+```
+
+
+
+
+
+
+
 
